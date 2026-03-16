@@ -3,7 +3,7 @@
 A multi-agent Retrieval-Augmented Generation (RAG) system for querying and comparing official basketball rulebooks from different leagues (NBA, WNBA, NCAA, FIBA).
 
 
-**[Chat Here](https://turkeyelectricityprediction.streamlit.app/)**
+**[Chat Here](https://agentic-rag-for-basketball-rules.streamlit.app/)**
 
 ## Architecture
 
