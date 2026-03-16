@@ -53,12 +53,20 @@ elif prompt := st.chat_input("How many personal fouls gets you disqualified in N
         st.write(prompt)
 
     with st.chat_message("assistant"):
-        with st.spinner("Agents are thinking... (may take up to 90 seconds)"):
+        status = st.empty()
+        status.info("Agents are thinking...")
+
+        def on_status(msg):
+            status.info(msg)
+
+        with st.spinner():
             league_arg = league_filter if league_filter != "None" else None
 
             history_for_rag = [{"role": m["role"], "content": m["content"]} for m in st.session_state.messages[:-1]][-10:]
 
-            result = answer(prompt, league=league_arg, history=history_for_rag, trace=True)
+            result = answer(prompt, league=league_arg, history=history_for_rag, trace=True, on_status=on_status)
+
+            status.empty()
 
             ans_text = result["answer"]
             st.write(ans_text)

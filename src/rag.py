@@ -78,11 +78,13 @@ def answer(
     league: Optional[str] = None,
     history: Optional[list[dict]] = None,
     trace: bool = False,
+    on_status: Optional[callable] = None,
 ) -> dict:
 
     timings: dict[str, float] = {}
 
     t0 = time.perf_counter()
+    if on_status: on_status("Classifying question...")
     question_type = classify(question, history=history)
     timings["classify"] = round(time.perf_counter() - t0, 2)
 
@@ -99,6 +101,7 @@ def answer(
         messages = list(history or [])
         messages.append({"role": "user", "content": question})
         t0 = time.perf_counter()
+        if on_status: on_status("Generating answer...")
         client = _get_llm_client()
         response = client.chat.completions.create(
             model=MODEL_NAME,
@@ -122,6 +125,7 @@ def answer(
         return result
 
     t0 = time.perf_counter()
+    if on_status: on_status("Breaking down question...")
     sub_questions = decompose(question, history=history)
     timings["decompose"] = round(time.perf_counter() - t0, 2)
 
@@ -143,10 +147,12 @@ def answer(
             continue
 
         t0 = time.perf_counter()
+        if on_status: on_status(f"Retrieving rules for: {sub_q}")
         chunks = retrieve_per_league(sub_q, leagues=leagues)
         t_retrieve += time.perf_counter() - t0
 
         t0 = time.perf_counter()
+        if on_status: on_status("Following cross-references...")
         extra = follow_references(chunks)
         t_ref_follow += time.perf_counter() - t0
         seen_ref = {c["text"] for c in chunks}
@@ -156,6 +162,7 @@ def answer(
                 chunks.append(c)
 
         t0 = time.perf_counter()
+        if on_status: on_status("Reranking results...")
         chunks = rerank(sub_q, chunks)
         t_rerank += time.perf_counter() - t0
 
@@ -188,6 +195,7 @@ def answer(
     messages.append({"role": "user", "content": _build_prompt(question, grouped_sources)})
 
     t0 = time.perf_counter()
+    if on_status: on_status("Generating answer...")
     client = _get_llm_client()
     response = client.chat.completions.create(
         model=MODEL_NAME,
