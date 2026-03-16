@@ -12,7 +12,7 @@ flowchart TD
     User([User Query]) --> Classifier
     Classifier{Classifier}
     
-    Classifier -->|Out of Scope / Conversational / Retry| FastReturn[Direct LLM Response]
+    Classifier -->|Out of Scope / Conversational / Retry| FastReturn[Direct LLM Response / Error]
     Classifier -->| Lookup | Decomposer
     
     Decomposer --> SubQ1[Sub-Query 1]
