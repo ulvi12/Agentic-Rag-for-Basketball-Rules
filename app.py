@@ -5,8 +5,8 @@ import time
 
 load_dotenv()
 
-RATE_LIMIT_MAX = 50
-RATE_LIMIT_WINDOW = 30 * 60
+RATE_LIMIT_MAX = 30
+RATE_LIMIT_WINDOW = 60 * 60
 
 st.set_page_config(page_title="Basketball Rules RAG", page_icon="🏀", layout="wide")
 
